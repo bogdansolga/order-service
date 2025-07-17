@@ -4,7 +4,7 @@ metadata:
   name: order-service
   namespace: order-service
 spec:
-  replicas: 2
+  replicas: 1 
   selector:
     matchLabels:
       app: order-service
@@ -20,21 +20,19 @@ spec:
             - containerPort: 8080
           envFrom:
             - configMapRef:
-                name: ai-query-hub-db-config
+                name: order-service-db-config
             - secretRef:
-                name: ai-query-hub-db-secret
+                name: order-service-db-secret
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://$(AI_QUERY_HUB_DB_HOST):$(AI_QUERY_HUB_DB_PORT)/$(AI_QUERY_HUB_DB_NAME)
+              value: jdbc:postgresql://$(ORDER_SERVICE_DB_HOST):$(ORDER_SERVICE_DB_PORT)/$(ORDER_SERVICE_DB_NAME)
             - name: SPRING_DATASOURCE_USERNAME
-              value: $(AI_QUERY_HUB_DB_USER)
+              value: $(ORDER_SERVICE_DB_USER)
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: ai-query-hub-db-secret
-                  key: AI_QUERY_HUB_DB_PASSWORD
-          # if you want to configure a service to use 100% of a single CPU’s time, you would use a millicore value of 1000m
-          # https://www.ardanlabs.com/blog/2024/02/kubernetes-cpu-limits-go.html
+                  name: order-service-db-secret
+                  key: ORDER_SERVICE_DB_PASSWORD
           resources:
             requests:
               cpu: 750m
