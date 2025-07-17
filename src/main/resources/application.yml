@@ -1,0 +1,61 @@
+
+# logging settings
+logging:
+  level:
+    root: info
+    com:
+      zaxxer: warn
+    org:
+      apache: warn
+      # to see the query parameters - change 'sql' to 'debug' and 'type' to 'trace'
+      hibernate: warn
+        #sql: warn
+      #type: warn
+      springframework: warn
+
+  pattern:
+    # special characters need to be escaped / quoted
+    console: '%clr([%thread] [%date{HH:mm:ss.SSS}]){faint} %clr(%2p) %clr(%-40.40logger{36}){cyan} %m%n%wex'
+
+server:
+  tomcat:
+    threads:
+      max: 10
+      min-spare: 2
+
+spring:
+  application:
+    name: order-service
+
+  # DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    name: order_service
+    password: kvL9MxNPbRx2ZYn
+    username: order_service_admin
+    url: jdbc:postgresql://${DATABASE_HOST}:543/${spring.datasource.name}
+
+
+  # JPA properties - JpaProperties
+  jpa:
+    hibernate:
+      ddl-auto: update # use it carefully
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+    open-in-view: false
+
+  # indent the returned JSON responses
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+  # the database type
+  sql:
+    init:
+      platform: postgres
+      schema-locations: 'classpath:sql/schema.sql'
+      data-locations: 'classpath:sql/data.sql'
+      # to be set to 'always' when the bootstrapping of the local database is needed
+      mode: never

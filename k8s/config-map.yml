@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+   name: order-service
+   namespace: order-service
+data:
+   ORDER_SERVICE_DB_NAME: "order_service"
+   ORDER_SERVICE_DB_HOST: "postgresql.svc.cluster.local"
+   ORDER_SERVICE_DB_PORT: "5432"
