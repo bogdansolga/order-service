@@ -63,6 +63,12 @@
 	<profiles>
 		<profile>
 			<id>ci</id>
+			<activation>
+				<property>
+					<name>spring.profiles.active</name>
+					<value>ci</value>
+				</property>
+			</activation>
 			<dependencies>
 				<dependency>
 					<groupId>com.h2database</groupId>
@@ -70,6 +76,19 @@
 					<scope>runtime</scope>
 				</dependency>
 			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<profiles>
+								<profile>ci</profile>
+							</profiles>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 </project>
