@@ -26,6 +26,7 @@ server:
 spring:
   application:
     name: order-service
+    version: 0.0.1
 
   # DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
   datasource:
