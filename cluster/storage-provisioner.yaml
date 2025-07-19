@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: storage-provisioner
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: storage-provisioner
+  namespace: storage-provisioner
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: storage-provisioner
+  namespace: storage-provisioner
+  labels:
+    app: storage-provisioner
+spec:
+  selector:
+    matchLabels:
+      app: storage-provisioner
+  template:
+    metadata:
+      labels:
+        app: storage-provisioner
+    spec:
+      serviceAccountName: storage-provisioner
+      initContainers:
+      - name: setup-directories
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          echo "Creating storage directory on host..."
+          mkdir -p /host/tmp/postgres-data
+          
+          echo "Setting permissions..."
+          chmod 777 /host/tmp/postgres-data
+          
+          echo "Storage directory created successfully!"
+          ls -la /host/tmp/
+        volumeMounts:
+        - name: host-root
+          mountPath: /host
+        securityContext:
+          privileged: true
+      containers:
+      - name: pause
+        image: gcr.io/google_containers/pause:3.9
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+          limits:
+            cpu: 10m
+            memory: 10Mi
+      volumes:
+      - name: host-root
+        hostPath:
+          path: /
+          type: Directory
+      hostNetwork: true
+      hostPID: true
+      tolerations:
+      - operator: Exists
+      priorityClassName: system-node-critical
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: storage-provisioner-script
+  namespace: storage-provisioner
+data:
+  verify-storage.sh: |
+    #!/bin/sh
+    echo "Verifying storage directory..."
+    if [ -d "/tmp/postgres-data" ]; then
+      echo "✓ /tmp/postgres-data exists"
+      ls -ld "/tmp/postgres-data"
+    else
+      echo "✗ /tmp/postgres-data missing"
+    fi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: verify-storage
+  namespace: storage-provisioner
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: verify
+        image: busybox:1.36
+        command:
+        - sh
+        - /scripts/verify-storage.sh
+        volumeMounts:
+        - name: scripts
+          mountPath: /scripts
+        - name: host-tmp
+          mountPath: /tmp
+      volumes:
+      - name: scripts
+        configMap:
+          name: storage-provisioner-script
+          defaultMode: 0755
+      - name: host-tmp
+        hostPath:
+          path: /tmp
+          type: Directory
