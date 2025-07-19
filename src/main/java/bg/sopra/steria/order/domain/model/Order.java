@@ -20,7 +20,7 @@ public class Order extends AbstractEntity {
     @Column(name = "total", length = 10)
     private double total;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private OrderStatus status;
 
