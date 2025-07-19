@@ -2,7 +2,7 @@
 FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
 COPY . .
-RUN ./mvnw --quiet clean package -Pci
+RUN ./mvnw --quiet clean package -Dspring.profiles.active=ci -Pci
 # -DskipTests
 
 # Stage 2: Run the application
