@@ -4,6 +4,7 @@ import bg.sopra.steria.order.domain.model.Order;
 import bg.sopra.steria.order.domain.model.OrderItem;
 import bg.sopra.steria.order.domain.model.OrderStatus;
 import bg.sopra.steria.order.domain.repository.OrderRepository;
+import bg.sopra.steria.order.dto.CreateOrderItemDTO;
 import bg.sopra.steria.order.dto.OrderDTO;
 import bg.sopra.steria.order.dto.OrderItemDTO;
 import org.slf4j.Logger;
@@ -66,5 +67,27 @@ public class OrderService {
         return orderItems.stream()
                          .map(item -> new OrderItemDTO(item.getId(), item.getName(), item.getPrice()))
                          .toList();
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+    public OrderDTO createOrder(long customerId, CreateOrderItemDTO item) {
+        LOGGER.info("Creating order for customer {}", customerId);
+        
+        Order order = new Order(customerId, item.price());
+        order.setStatus(OrderStatus.CREATED);
+        
+        OrderItem orderItem = new OrderItem();
+        orderItem.setRestaurantId(item.restaurantId());
+        orderItem.setFoodId(item.foodId());
+        orderItem.setPrice(item.price());
+        orderItem.setName(item.name());
+        orderItem.setDescription(item.description());
+        orderItem.setOrder(order);
+        
+        order.setOrderItems(Set.of(orderItem));
+        Order savedOrder = orderRepository.save(order);
+        
+        LOGGER.info("Order {} created successfully", savedOrder.getId());
+        return new OrderDTO(savedOrder.getCustomerId(), savedOrder.getId(), savedOrder.getTotal(), convertOrderItems(savedOrder.getOrderItems()));
     }
 }
