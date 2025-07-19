@@ -2,7 +2,8 @@
 FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
 COPY . .
-RUN ./mvnw --quiet clean package -DskipTests
+RUN ./mvnw --quiet clean package -Pci
+# -DskipTests
 
 # Stage 2: Run the application
 FROM eclipse-temurin:21-jre-alpine
