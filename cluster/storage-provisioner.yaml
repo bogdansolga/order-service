@@ -48,7 +48,7 @@ spec:
           privileged: true
       containers:
       - name: pause
-        image: gcr.io/google_containers/pause:3.9
+        image: gcr.io/google_containers/pause-amd64:3.0
         resources:
           requests:
             cpu: 10m
