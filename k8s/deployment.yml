@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: bogdansolga/order-service:0.0.1-2025-07-22-53efb20
+          image: bogdansolga/order-service:0.0.1-2025-07-22-6e23130
           ports:
             - containerPort: 8080
           envFrom:
