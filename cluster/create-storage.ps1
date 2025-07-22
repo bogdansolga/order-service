@@ -4,6 +4,6 @@ $nodeArray = $nodes -split ' '
 
 foreach ($node in $nodeArray) {
     Write-Host "Creating directory on node: $node"
-    docker exec $node mkdir -p /tmp/postgres-data
-    docker exec $node chmod 777 /tmp/postgres-data
+    docker exec $node powershell -Command "New-Item -ItemType Directory -Path C:\tmp\postgres-data -Force"
+    docker exec $node powershell -Command "icacls C:\tmp\postgres-data /grant Everyone:F"
 }
