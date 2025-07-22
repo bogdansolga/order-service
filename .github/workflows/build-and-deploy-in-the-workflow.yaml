@@ -21,6 +21,7 @@ jobs:
     steps:
       - name: "Clone the code"
         uses: actions/checkout@v4.2.2
+        # TODO do not clone the entire repo, just the last commit
 
       - name: "Build the code"
         run: echo "Building the code..."
