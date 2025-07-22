@@ -1,0 +1,26 @@
+name: "Build and Deploy in the Workflow"
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '**.MD'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '**.MD'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: 'Build and Deploy in the Workflow'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Clone the code"
+        uses: actions/checkout@v4.2.2
+
+      - name: "Build the code"
+        run: echo "Building the code..."
